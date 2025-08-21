@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import App from '@app/components/App';
 
 declare const BASE_URL: string;
-console.log('BASE_URL =', BASE_URL);
+console.log('BASE_URL =', BASE_URL); //
 
 const container = document.getElementById('app-container');
 if (!container) { throw new Error('Missing #app-container'); }
