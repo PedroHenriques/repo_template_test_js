@@ -83,10 +83,10 @@ else
   docker network create myapp_shared || true;
 fi
 
-CMD="npm run test ${FILTERS} ${COVERAGE} ${PROJ}";
+CMD="npm ci && npm run test ${FILTERS} ${COVERAGE} ${PROJ}";
 
 if [ $WATCH -eq 1 ]; then
-  CMD="npm run test:watch";
+  CMD="npm ci && npm run test:watch";
 fi
 
 if [ $USE_DOCKER -eq 1 ]; then
