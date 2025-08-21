@@ -1,0 +1,72 @@
+{
+  "name": "js_react_template",
+  "version": "1.0.0",
+  "description": "Your application brief description.",
+  "private": true,
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build:test": "rimraf .test-build && tsc -p tsconfig.test-build.json",
+    "test": "npm run build:test && mocha --config ./test/.mocharc.json",
+    "test:coverage": "npm run build:test && C8_REPORT_DIR=${C8_REPORT_DIR} c8 --report-dir=${C8_REPORT_DIR} mocha --config ./test/.mocharc.json",
+    "coverage:report": "c8 report --reporter=lcov --reporter=text-summary",
+    "watch:build": "tsc -p tsconfig.test-build.json -w --preserveWatchOutput",
+    "watch:test": "mocha --config ./test/.mocharc.json --watch --watch-files \"test/**/*.js\" --watch-files \".test-build/**/*.js\"",
+    "test:watch": "concurrently -k -n BUILD,TEST -c blue,green \"npm:watch:build\" \"npm:watch:test\"",
+    "build:dev": "webpack --mode development",
+    "build:prod": "webpack --mode production",
+    "lint": "eslint src --ext .js,.ts,.tsx",
+    "start": "webpack serve --mode development",
+    "versionbump": "ncu"
+  },
+  "keywords": [],
+  "author": "",
+  "workspaces": [
+    "src/App"
+  ],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/sinon": "^17.0.4",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
+    "c8": "^10.1.3",
+    "chai": "^5.3.1",
+    "concurrently": "^9.2.0",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "fork-ts-checker-webpack-plugin": "^9.1.0",
+    "html-webpack-plugin": "^5.6.4",
+    "mini-css-extract-plugin": "^2.9.4",
+    "mocha": "^11.7.1",
+    "npm-check-updates": "^18.0.2",
+    "postcss-loader": "^8.1.1",
+    "proxyquire": "^2.1.3",
+    "puppeteer": "^24.16.2",
+    "rimraf": "^6.0.1",
+    "sass-embedded": "^1.90.0",
+    "sass-loader": "^16.0.5",
+    "sinon": "^21.0.0",
+    "source-map-support": "^0.5.21",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2",
+    "whatwg-fetch": "^3.6.20"
+  }
+}

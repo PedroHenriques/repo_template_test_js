@@ -1,0 +1,14 @@
+{
+  "extension": [
+    "js"
+  ],
+  "spec": [
+    "./test/**/*.@(test|spec).js"
+  ],
+  "require": [
+    "source-map-support/register",
+    "./test/alias-register.js"
+  ],
+  "recursive": true,
+  "timeout": 8000
+}

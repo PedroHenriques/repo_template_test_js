@@ -1,0 +1,7 @@
+src/
+test/
+setup/local/.env.template
+setup/local/docker-compose.yml
+documentation/app_arch.png
+CHANGELOG.md
+package-lock.json

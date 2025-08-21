@@ -1,0 +1,20 @@
+{
+  "reporter": [
+    "html",
+    "text-summary",
+    "lcov"
+  ],
+  "all": true,
+  "src": [
+    "src"
+  ],
+  "clean": true,
+  "exclude": [
+    "test/**",
+    ".test-build/**",
+    "src/**/dist/**",
+    "**/node_modules/**",
+    "**/webpack/**"
+  ],
+  "exclude-after-remap": true
+}

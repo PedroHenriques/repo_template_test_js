@@ -1,0 +1,28 @@
+services:
+  app:
+    image: ${PROJECT_NAME:-myapp}_app:${IMAGE_TAG:-latest}
+    build:
+      context: ../../
+      dockerfile: ./src/App/Dockerfile
+    container_name: "app"
+    restart: on-failure
+    environment:
+      - NODE_ENV=development
+      - WEBPACK_WATCH_POLL="500"
+      - PUPPETEER_SKIP_DOWNLOAD="true"
+      - APP_PORT=${APP_PORT:-10000}
+      - BASE_URL=${BASE_URL:-/}
+      - SERVICE=App
+    ports:
+      - ${APP_PORT:-10000}:${APP_PORT:-10000}
+    volumes:
+      - ../../:/app
+      - /app/node_modules
+    networks:
+      - app
+      - myapp_shared
+
+networks:
+  app:
+  myapp_shared:
+    external: true
