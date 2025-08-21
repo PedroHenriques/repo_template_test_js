@@ -31,7 +31,7 @@ fi
 
 find . -type d -name "${TEST_COVERAGE_DIR_PATH}" -exec rm -rf {} +;
 
-CMD="C8_REPORT_DIR='${TEST_COVERAGE_DIR_PATH}' npm run test:coverage -- \"./test/unit/**/*.@(test|spec).js\""
+CMD="npm ci && C8_REPORT_DIR='${TEST_COVERAGE_DIR_PATH}' npm run test:coverage -- \"./test/unit/**/*.@(test|spec).js\""
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";

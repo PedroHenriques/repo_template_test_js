@@ -13,7 +13,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-CMD="npm run lint";
+CMD="npm ci && npm run lint";
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";

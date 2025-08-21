@@ -21,7 +21,7 @@ if [ $UPDATE -eq 1 ]; then
   OPTS="${OPTS} -u && npm i";
 fi
 
-CMD="npm run versionbump -- --workspaces --root ${OPTS}";
+CMD="npm ci && npm run versionbump -- --workspaces --root ${OPTS}";
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
   if [ $RUNNING_IN_PIPELINE -eq 1 ]; then
