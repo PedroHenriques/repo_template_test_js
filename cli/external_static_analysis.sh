@@ -3,6 +3,8 @@ set -e;
 
 : "${TEST_COVERAGE_DIR_PATH:=coverageReport}";
 : "${TEST_COVERAGE_FILE_NAME:=lcov.info}";
+: "${SONAR_QG_WAIT:=true}"
+: "${SONAR_QG_TIMEOUT_SEC:=600}"
 
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
@@ -31,7 +33,7 @@ if [ ! -f "${TEST_COVERAGE_DIR_PATH}/${TEST_COVERAGE_FILE_NAME}" ]; then
   TEST_COVERAGE_DIR_PATH="${TEST_COVERAGE_DIR_PATH}" TEST_COVERAGE_FILE_NAME="${TEST_COVERAGE_FILE_NAME}" sh cli/coverage.sh ${FLAGS};
 fi
 
-CMD="sonar-scanner";
+CMD="sonar-scanner -Dsonar.qualitygate.wait=${SONAR_QG_WAIT} -Dsonar.qualitygate.timeout=${SONAR_QG_TIMEOUT_SEC}";
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
