@@ -27,8 +27,8 @@ This repository contains a local development environment, fully containerised, t
 
 **NOTE:** Use of a unix command line environment is recommended.
 
-### Run the local environment
-To run the local environment follow these steps:
+### Run the local environment in development mode
+To run the local environment, in development mode, follow these steps:
 
 1. From the root of the project run the command
 ```sh
@@ -50,6 +50,34 @@ This will run a Docker compose project and start several networked Docker contai
 
 The following services will be running in the containers:
 - List your services here
+
+2. Interact with the local environment via the following URLs:
+
+`Application`: [http://localhost:10000](http://localhost:10000)
+
+### Run the local environment simulating the remote environment
+To run the local environment, simulating a remote environment, follow these steps:
+
+1. From the root of the project run the command
+```sh
+sh cli/start_nginx.sh [flags] [services]
+```
+Where:
+
+**flags:**<br>
+Any flag supported by the `Docker compose up` command.<br>
+For more information consult the official Docker [documentation](https://docs.docker.com/reference/cli/docker/compose/up/).<br>
+**NOTE:** Consider using the `-d` flag, which runs the Docker project in detached mode.
+
+**services:**<br>
+Whitespace separated list of services to run.<br>
+The available services are declared in the local environment Docker compose project at `setup/local/docker-compose.nginx.yml`.<br>
+**NOTE:** If no services are provided, all services will be started.
+
+This will run a Docker compose project and start several networked Docker containers will all the services and necessary tools to use the application.
+
+The following services will be running in the containers:
+- NginX server
 
 2. Interact with the local environment via the following URLs:
 

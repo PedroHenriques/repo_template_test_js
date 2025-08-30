@@ -54,7 +54,7 @@ module.exports = (env = {}, argv = {}) => {
     mode: isProd ? 'production' : 'development',
     entry: ['whatwg-fetch', `./src/${service}/index.tsx`],
     output: {
-      path: path.resolve(__dirname, 'src', service, 'dist'),
+      path: path.resolve(__dirname, 'dist', service),
       publicPath: baseUrl,
       filename: isProd ? 'js/[name].[contenthash:8].js' : 'js/bundle.js',
       chunkFilename: isProd ? 'js/[name].[contenthash:8].js' : 'js/[name].js',

@@ -1,0 +1,43 @@
+services:
+  builder:
+    image: node:24-bullseye-slim
+    container_name: "builder"
+    working_dir: /app
+    environment:
+      BASE_URL: ${BASE_URL:-/}
+      SRC_DIR: ${SRC_DIR:-src}
+    volumes:
+      - ../../:/app
+    command: >
+      sh -lc "
+        if [ ! -d node_modules ]; then npm ci; fi &&
+        chmod +x ./cli/build_dist.sh && ./cli/build_dist.sh --base-per-service &&
+        tail -f /dev/null
+      "
+    networks:
+      - nginx
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: "nginx"
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost${BASE_PATH:-/}"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    depends_on:
+      - builder
+    environment:
+      BASE_PATH: ${BASE_PATH:-/}
+      DEFAULT_SERVICE: ${DEFAULT_SERVICE:-App}
+    ports:
+      - ${APP_PORT:-10000}:80
+    volumes:
+      - ../../dist/:/app:ro
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    networks:
+      - nginx
+
+networks:
+  nginx:
