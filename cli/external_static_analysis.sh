@@ -3,6 +3,8 @@ set -e;
 
 : "${TEST_COVERAGE_DIR_PATH:=coverageReport}";
 : "${TEST_COVERAGE_FILE_NAME:=lcov.info}";
+: "${SONAR_QG_WAIT:=true}"
+: "${SONAR_QG_TIMEOUT_SEC:=600}"
 
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
@@ -31,7 +33,14 @@ if [ ! -f "${TEST_COVERAGE_DIR_PATH}/${TEST_COVERAGE_FILE_NAME}" ]; then
   TEST_COVERAGE_DIR_PATH="${TEST_COVERAGE_DIR_PATH}" TEST_COVERAGE_FILE_NAME="${TEST_COVERAGE_FILE_NAME}" sh cli/coverage.sh ${FLAGS};
 fi
 
-CMD="sonar-scanner";
+EXTRA_OPTS=""
+if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ]; then
+  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.pullrequest.key=${GITHUB_REF_NAME#refs/pull/} -Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} -Dsonar.pullrequest.base=${GITHUB_BASE_REF}";
+else
+  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.branch.name=${GITHUB_REF_NAME}";
+fi
+
+CMD="sonar-scanner -Dsonar.qualitygate.wait=${SONAR_QG_WAIT} -Dsonar.qualitygate.timeout=${SONAR_QG_TIMEOUT_SEC} ${EXTRA_OPTS} -Dsonar.projectBaseDir=/app";
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
