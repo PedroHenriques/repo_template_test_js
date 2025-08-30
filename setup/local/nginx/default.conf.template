@@ -1,0 +1,45 @@
+server {
+  listen 80;
+  charset utf-8;
+
+  # BASE_PATH: "/" or "/prefix/" (must have leading+trailing slash)
+  # DEFAULT_SERVICE: optional, used for redirect from BASE_PATH to e.g. "/App/"
+  set $base_path "${BASE_PATH}";
+  set $default_service "${DEFAULT_SERVICE}";
+
+  # Long-cache static assets for *any* service:
+  # /<BASE_PATH><service>/<...>.{js,css,png,...}  ->  /app/<service>/<...>
+  location ~ ^${BASE_PATH}([^/]+)(/.*\.(?:js|css|png|jpg|jpeg|gif|svg|woff2?|ttf|eot))$ {
+    root /app;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    try_files /$1$2 =404;
+  }
+
+  # SPA fallback per service (index.html):
+  # /<BASE_PATH><service>[/...]
+  location ~ ^${BASE_PATH}([^/]+)(/.*)?$ {
+    root /app;
+    index index.html;
+    # If a file isn’t found, try that service’s index.html; if that also
+    # doesn’t exist (unknown service), return 404 instead of looping.
+    try_files /$1$2 /$1/index.html =404;
+  }
+
+  # Redirect bare BASE_PATH to the default service, preserving scheme + host + PORT
+  location = ${BASE_PATH} {
+    if ($default_service = "") { return 404; }
+
+    # Build a clean redirect path (avoid double slashes when BASE_PATH = "/")
+    set $redir $base_path$default_service/;
+    if ($base_path = "/") { set $redir /$default_service/; }
+
+    return 308 $scheme://$http_host$redir;
+  }
+
+
+  # Normalize "/<service>" (no trailing slash) -> "/<service>/"
+  location ~ ^${BASE_PATH}([^/]+)$ {
+    return 302 ${BASE_PATH}$1/;
+  }
+}

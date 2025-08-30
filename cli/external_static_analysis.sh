@@ -3,6 +3,8 @@ set -e;
 
 : "${TEST_COVERAGE_DIR_PATH:=coverageReport}";
 : "${TEST_COVERAGE_FILE_NAME:=lcov.info}";
+: "${SONAR_QG_WAIT:=true}"
+: "${SONAR_QG_TIMEOUT_SEC:=600}"
 
 USE_DOCKER=0;
 RUNNING_IN_PIPELINE=0;
@@ -31,7 +33,24 @@ if [ ! -f "${TEST_COVERAGE_DIR_PATH}/${TEST_COVERAGE_FILE_NAME}" ]; then
   TEST_COVERAGE_DIR_PATH="${TEST_COVERAGE_DIR_PATH}" TEST_COVERAGE_FILE_NAME="${TEST_COVERAGE_FILE_NAME}" sh cli/coverage.sh ${FLAGS};
 fi
 
-CMD="sonar-scanner";
+EXTRA_OPTS=""
+PR_KEY=""
+
+if [ -n "${GITHUB_EVENT_PATH:-}" ] && [ -f "${GITHUB_EVENT_PATH}" ]; then
+  PR_KEY="$(grep -o '"number":[[:space:]]*[0-9]\+' "${GITHUB_EVENT_PATH}" | head -1 | grep -o '[0-9]\+' || true)";
+fi
+
+if [ -z "${PR_KEY}" ] && [ -n "${GITHUB_REF:-}" ]; then
+  PR_KEY="$(printf '%s\n' "${GITHUB_REF}" | sed -n 's#refs/pull/\([0-9]\+\)/.*#\1#p')";
+fi
+
+if [ -n "${PR_KEY}" ]; then
+  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.pullrequest.key=${PR_KEY} -Dsonar.pullrequest.branch=${GITHUB_HEAD_REF} -Dsonar.pullrequest.base=${GITHUB_BASE_REF}";
+else
+  EXTRA_OPTS="$EXTRA_OPTS -Dsonar.branch.name=${GITHUB_REF_NAME}";
+fi
+
+CMD="sonar-scanner -Dsonar.qualitygate.wait=${SONAR_QG_WAIT} -Dsonar.qualitygate.timeout=${SONAR_QG_TIMEOUT_SEC} ${EXTRA_OPTS} -Dsonar.projectBaseDir=/app";
 
 if [ $USE_DOCKER -eq 1 ]; then
   INTERACTIVE_FLAGS="-it";
