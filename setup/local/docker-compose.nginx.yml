@@ -2,6 +2,7 @@ services:
   builder:
     image: node:24-bullseye-slim
     container_name: "builder"
+    profiles: ["only_if_not_cicd"]
     working_dir: /app
     environment:
       BASE_URL: ${BASE_URL:-/}
@@ -20,6 +21,7 @@ services:
   nginx:
     image: nginx:1.27-alpine
     container_name: "nginx"
+    profiles: ["only_if_not_cicd"]
     restart: on-failure
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost${BASE_PATH:-/}"]
